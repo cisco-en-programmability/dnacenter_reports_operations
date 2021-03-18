@@ -65,10 +65,11 @@ def client_report():
     if request.method == 'POST':
         print('Webhook Received')
         webhook_json = request.json
+        print(type(webhook_json))
 
         # print the received notification
         print('Payload: ')
-        print(str(webhook_json))
+        print(webhook_json)
 
         return 'Client Detail Report Data Received', 202
     else:
