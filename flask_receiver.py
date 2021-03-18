@@ -29,6 +29,7 @@ import os
 import time
 import dnacentersdk
 
+
 from flask import Flask, request, abort, send_from_directory
 from flask_basicauth import BasicAuth
 
@@ -75,4 +76,4 @@ def wireless_clients():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, ssl_context='adhoc')

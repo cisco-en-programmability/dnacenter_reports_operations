@@ -5,3 +5,4 @@ Flask-BasicAuth
 fpdf
 requests_toolbelt
 dnacentersdk
+pyopenssl
