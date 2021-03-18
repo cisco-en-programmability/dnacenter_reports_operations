@@ -61,7 +61,7 @@ def index():
 def client_report():
     if request.method == 'POST':
         print('Webhook Received')
-        webhook_json = request.get_json()
+        webhook_json = request.json
         print(type(webhook_json))
 
         # print the received notification
