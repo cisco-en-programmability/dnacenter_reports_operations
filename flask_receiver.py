@@ -61,7 +61,7 @@ def index():
 
 @app.route('/client_report', methods=['POST'])  # API endpoint to receive the client detail report
 @basic_auth.required
-def wireless_clients():
+def client_report():
     if request.method == 'POST':
         print('Wireless Clients Data Received')
         webhook_json = request.json
@@ -70,7 +70,7 @@ def wireless_clients():
         print('Payload: ')
         print(webhook_json)
 
-        return 'Wireless Clients Data Received', 202
+        return 'Client Detail Report Data Received', 202
     else:
         return 'Method not supported', 405
 
