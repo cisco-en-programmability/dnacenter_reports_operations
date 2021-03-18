@@ -63,7 +63,7 @@ def index():
 @basic_auth.required
 def client_report():
     if request.method == 'POST':
-        print('Wireless Clients Data Received')
+        print('Webhook Received')
         webhook_json = request.json
 
         # print the received notification
