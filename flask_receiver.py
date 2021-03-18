@@ -68,7 +68,7 @@ def client_report():
 
         # print the received notification
         print('Payload: ')
-        print(webhook_json)
+        print(str(webhook_json))
 
         return 'Client Detail Report Data Received', 202
     else:
