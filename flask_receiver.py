@@ -20,11 +20,8 @@ __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2021 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
-import requests
+
 import urllib3
-import sys
-import json
-import datetime
 import os
 import time
 import dnacentersdk
