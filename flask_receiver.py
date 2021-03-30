@@ -62,7 +62,6 @@ def client_report():
     if request.method == 'POST':
         print('Webhook Received')
         webhook_json = request.json
-        print(type(webhook_json))
 
         # print the received notification
         print('Payload: ')
@@ -75,3 +74,6 @@ def client_report():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context='adhoc')
+
+
+# curl -u 'admin:rece!v3r06' --insecure -X POST -H "Content-Type: application/json" -d '{"name": "linuxize", "email": "linuxize@example.com"}' https://10.93.141.48:5000/client_report

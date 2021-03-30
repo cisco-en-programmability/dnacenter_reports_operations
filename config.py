@@ -28,7 +28,7 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 
 # This file contains:
 # Webhook URL, username and password
-WEBHOOK_URL = 'https://zapodeanu.pythonanywhere.com/proximity'
+WEBHOOK_URL = 'https://10.93.141.48:5000/client_report'
 WEBHOOK_USERNAME = 'admin'
 WEBHOOK_PASSWORD = 'rece!v3r06'
 WEBHOOK_AUTH = 'Basic YWRtaW46cmVjZSF2M3IwNg=='
