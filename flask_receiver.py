@@ -21,19 +21,18 @@ __copyright__ = "Copyright (c) 2021 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
 
 
-import urllib3
 import os
 import time
-import dnacentersdk
 
-
-from flask import Flask, request, abort, send_from_directory
+import requests
+import urllib3
+from flask import Flask, request
 from flask_basicauth import BasicAuth
-
+from requests.auth import HTTPBasicAuth  # for Basic Auth
 from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
 
-
-from config import WEBHOOK_USERNAME, WEBHOOK_PASSWORD, WEBHOOK_URL
+from config import DNAC_URL, DNAC_USER, DNAC_PASS
+from config import WEBHOOK_USERNAME, WEBHOOK_PASSWORD
 
 os.environ['TZ'] = 'America/Los_Angeles'  # define the timezone for PST
 time.tzset()  # adjust the timezone, more info https://help.pythonanywhere.com/pages/SettingTheTimezone/
@@ -48,6 +47,21 @@ app.config['BASIC_AUTH_PASSWORD'] = WEBHOOK_PASSWORD
 # app.config['BASIC_AUTH_FORCE'] = True  # enable if all API endpoints support HTTP basic auth
 
 basic_auth = BasicAuth(app)
+DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
+
+
+def get_dnac_jwt_token(dnac_auth):
+    """
+    Create the authorization token required to access DNA C
+    Call to Cisco DNA Center - /api/system/v1/auth/login
+    :param dnac_auth - Cisco DNA Center Basic Auth string
+    :return: Cisco DNA Center JWT token
+    """
+    url = DNAC_URL + '/dna/system/api/v1/auth/token'
+    header = {'content-type': 'application/json'}
+    response = requests.post(url, auth=dnac_auth, headers=header, verify=False)
+    dnac_jwt_token = response.json()['Token']
+    return dnac_jwt_token
 
 
 @app.route('/')  # create a decorator for testing the Flask framework
@@ -67,6 +81,35 @@ def client_report():
         print('Payload: ')
         print(webhook_json)
 
+        # parse the report status and event type
+        event_type = webhook_json['Event Type']
+        event_status = webhook_json['Event Details']['status']
+
+        if event_type == 'APP' and event_status == 'Success':
+
+            # get the Cisco DNA Center Auth token
+            dnac_auth = get_dnac_jwt_token(DNAC_AUTH)
+
+            report_url = webhook_json['Cisco DNA Center Event Context link. **This link is active only in the context of Cisco DNA Center. You must have necessary permissions to login']
+
+            # parse the "data-set-id" and "execution-id" from the provided URL
+            report_list = report_url.split('&')
+            print(report_list)
+            for item in report_list:
+                if 'data-set-id' in item:
+                    data_set_id = item.replace('data-set-id=', '')
+                elif 'execution-id' in item:
+                    execution_id = item.replace('execution-id=', '')
+
+            # call the API to download the report file
+            report_file_url = DNAC_URL + '/api/dnacaap/v1/daas/core/content/data-set/' + data_set_id + '/' + execution_id
+            header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
+            response = requests.get(report_file_url, headers=header, verify=False)
+
+            # save the report to a file
+            with open('client_report.json', 'wb') as file:
+                file.write(response.content)
+
         return 'Client Detail Report Data Received', 202
     else:
         return 'Method not supported', 405
@@ -76,4 +119,3 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context='adhoc')
 
 
-# curl -u 'admin:rece!v3r06' --insecure -X POST -H "Content-Type: application/json" -d '{"name": "linuxize", "email": "linuxize@example.com"}' https://10.93.141.48:5000/client_report

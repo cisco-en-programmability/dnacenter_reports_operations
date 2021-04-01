@@ -34,6 +34,6 @@ WEBHOOK_PASSWORD = 'rece!v3r06'
 WEBHOOK_AUTH = 'Basic YWRtaW46cmVjZSF2M3IwNg=='
 
 # Cisco DNA Center dnalive
-DNAC_URL = 'https://dnalive.cisco.com'
-DNAC_USER = 'admin'
-DNAC_PASS = 'DNAisK00l!'
+DNAC_URL = 'https://10.93.141.35'
+DNAC_USER = 'demotme'
+DNAC_PASS = 'apiuser123!'
