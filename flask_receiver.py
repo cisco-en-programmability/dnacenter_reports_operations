@@ -79,7 +79,7 @@ def client_report():
 
         # print the received notification
         print('Payload: ')
-        print(webhook_json)
+        print(webhook_json, '\n')
 
         # parse the report status and event type
         event_type = webhook_json['Event Type']
@@ -94,7 +94,7 @@ def client_report():
 
             # parse the "data-set-id" and "execution-id" from the provided URL
             report_list = report_url.split('&')
-            print(report_list)
+
             for item in report_list:
                 if 'data-set-id' in item:
                     data_set_id = item.replace('data-set-id=', '')
@@ -109,6 +109,7 @@ def client_report():
             # save the report to a file
             with open('client_report.json', 'wb') as file:
                 file.write(response.content)
+                print('Client report file saved')
 
         return 'Client Detail Report Data Received', 202
     else:
