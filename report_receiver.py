@@ -132,6 +132,8 @@ def client_report():
 
             dnac_auth = get_dnac_jwt_token(DNAC_AUTH)
 
+            print('\nReport Id: ', report_id, '\nExecution Id: ', execution_id)
+
             # call the API to download the report file
             response = get_report_file(report_id, execution_id, dnac_auth)
 
