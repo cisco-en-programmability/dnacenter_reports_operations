@@ -138,9 +138,9 @@ def client_report():
             response = get_report_file(report_id, execution_id, dnac_auth)
 
             # save the report to a file
-            #with open('client_report.json', 'wb') as file:
-            #    file.write(response.content)
-            #    print('Client report file saved')
+            with open('report.json', 'wb') as file:
+                file.write(response.content)
+                print('Client report file saved')
 
         return 'Client Detail Report Data Received', 202
     else:
