@@ -6,3 +6,4 @@ fpdf
 requests_toolbelt
 dnacentersdk
 pyopenssl
+python-dotenv

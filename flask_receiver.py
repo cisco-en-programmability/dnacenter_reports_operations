@@ -23,21 +23,29 @@ __license__ = "Cisco Sample Code License, Version 1.1"
 
 import os
 import time
-
 import requests
 import urllib3
+
 from flask import Flask, request
 from flask_basicauth import BasicAuth
 from requests.auth import HTTPBasicAuth  # for Basic Auth
 from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
+from dotenv import load_dotenv
 
-from config import DNAC_URL, DNAC_USER, DNAC_PASS
-from config import WEBHOOK_USERNAME, WEBHOOK_PASSWORD
+
+urllib3.disable_warnings(InsecureRequestWarning)  # disable insecure https warnings
+
+load_dotenv('environment.env')
+
+WEBHOOK_USERNAME = os.getenv('WEBHOOK_USERNAME')
+WEBHOOK_PASSWORD = os.getenv('WEBHOOK_PASSWORD')
+
+DNAC_URL = os.getenv('DNAC_URL')
+DNAC_USER = os.getenv('DNAC_USER')
+DNAC_PASS = os.getenv('DNAC_PASS')
 
 os.environ['TZ'] = 'America/Los_Angeles'  # define the timezone for PST
 time.tzset()  # adjust the timezone, more info https://help.pythonanywhere.com/pages/SettingTheTimezone/
-
-urllib3.disable_warnings(InsecureRequestWarning)  # disable insecure https warnings
 
 
 app = Flask(__name__)
@@ -47,7 +55,6 @@ app.config['BASIC_AUTH_PASSWORD'] = WEBHOOK_PASSWORD
 # app.config['BASIC_AUTH_FORCE'] = True  # enable if all API endpoints support HTTP basic auth
 
 basic_auth = BasicAuth(app)
-DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
 
 
 def get_dnac_jwt_token(dnac_auth):
@@ -70,7 +77,7 @@ def index():
     return '<h1>Flask Receiver App is Up!</h1>', 200
 
 
-@app.route('/client_report', methods=['POST'])  # API endpoint to receive the client detail report
+@app.route('/dnacenter_report', methods=['POST'])  # API endpoint to receive the client detail report
 @basic_auth.required
 def client_report():
     if request.method == 'POST':
