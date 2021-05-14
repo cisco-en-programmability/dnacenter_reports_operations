@@ -92,11 +92,7 @@ def client_report():
         event_type = webhook_json['Event Type']
         event_status = webhook_json['Event Details']['status']
 
-
         if event_type == 'APP' and event_status == 'Success':
-
-            # get the Cisco DNA Center Auth token
-            dnac_auth = get_dnac_jwt_token(DNAC_AUTH)
 
             report_url = webhook_json['Cisco DNA Center Event Context link. **This link is active only in the context of Cisco DNA Center. You must have necessary permissions to login']
 
