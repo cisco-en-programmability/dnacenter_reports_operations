@@ -92,6 +92,7 @@ def client_report():
         event_type = webhook_json['Event Type']
         event_status = webhook_json['Event Details']['status']
 
+        """
         if event_type == 'APP' and event_status == 'Success':
 
             # get the Cisco DNA Center Auth token
@@ -117,6 +118,7 @@ def client_report():
             with open('client_report.json', 'wb') as file:
                 file.write(response.content)
                 print('Client report file saved')
+        """
 
         return 'Client Detail Report Data Received', 202
     else:
