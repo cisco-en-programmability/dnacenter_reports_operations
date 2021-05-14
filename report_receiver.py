@@ -137,10 +137,12 @@ def client_report():
 
             # call the API to download the report file
             report_content = get_report_file(report_id, execution_id, dnac_auth)
+            print(report_content)
 
             # save the report to a file
-            with open('report.json', 'wb') as file:
-                file.write(report_content)
+            report = json.dumps(report_content)
+            with open('report.json', 'w') as file:
+                file.write(report)
                 print('Client report file saved')
 
         return 'Client Detail Report Data Received', 202
