@@ -93,7 +93,8 @@ def get_report_file(report_id, execution_id, dnac_auth):
     url = DNAC_URL + '/data/reports/' + report_id + '/executions/' + execution_id
     header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
     response = requests.get(url, headers=header, verify=False)
-    return response
+    report = response.json()
+    return report
 
 
 @app.route('/')  # create a decorator for testing the Flask framework
@@ -135,11 +136,11 @@ def client_report():
             print('\nReport Id: ', report_id, '\nExecution Id: ', execution_id)
 
             # call the API to download the report file
-            response = get_report_file(report_id, execution_id, dnac_auth)
+            report_content = get_report_file(report_id, execution_id, dnac_auth)
 
             # save the report to a file
             with open('report.json', 'wb') as file:
-                file.write(response.content)
+                file.write(report_content)
                 print('Client report file saved')
 
         return 'Client Detail Report Data Received', 202
