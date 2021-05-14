@@ -1,12 +1,12 @@
 
-# Cisco DNA Center Client Inventory App
+# Cisco DNA Center Report Operations
 
 
-This repo is for an application that will receive the Cisco DNA Center Client Detail report and enrich the report with client details received from Cisco DNA Center using APIs.
+This repo is for an application that will create a new Cisco DNA Center Client Detail report, receive notifications when the report is in progress and completed. 
+It will download from Cisco DNA Center using APIs.
  
 This app is to be used only in demo or lab environments, it is not written for production. Please follow these
  recommendations for production Flask deployments: https://flask.palletsprojects.com/en/1.1.x/deploying/.
-
 
 
 
@@ -20,8 +20,9 @@ This app is to be used only in demo or lab environments, it is not written for p
 
 **Usage**
 
-The "flask_receiver.py" will receive the Cisco DNA Center Client Detail report.
-It will save the report to a file and collect additional information about each client included in the report.
+The "flask_receiver.py" will receive the Cisco DNA Center report notifications.
+
+It will save the report to a file.
  
  This sample code is for proof of concepts and labs
 
