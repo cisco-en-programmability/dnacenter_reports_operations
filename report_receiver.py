@@ -25,6 +25,7 @@ import os
 import time
 import requests
 import urllib3
+import json
 
 from flask import Flask, request
 from flask_basicauth import BasicAuth
@@ -55,6 +56,16 @@ app.config['BASIC_AUTH_PASSWORD'] = WEBHOOK_PASSWORD
 # app.config['BASIC_AUTH_FORCE'] = True  # enable if all API endpoints support HTTP basic auth
 
 basic_auth = BasicAuth(app)
+DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
+
+
+def pprint(json_data):
+    """
+    Pretty print JSON formatted data
+    :param json_data: data to pretty print
+    :return None
+    """
+    print(json.dumps(json_data, indent=4, separators=(' , ', ' : ')))
 
 
 def get_dnac_jwt_token(dnac_auth):
@@ -69,6 +80,20 @@ def get_dnac_jwt_token(dnac_auth):
     response = requests.post(url, auth=dnac_auth, headers=header, verify=False)
     dnac_jwt_token = response.json()['Token']
     return dnac_jwt_token
+
+
+def get_report_file(report_id, execution_id, dnac_auth):
+    """
+
+    :param report_id:
+    :param execution_id:
+    :param dnac_auth:
+    :return:
+    """
+    url = DNAC_URL + '/data/reports/' + report_id + '/executions/' + execution_id
+    header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
+    response = requests.get(url, headers=header, verify=False)
+    return response
 
 
 @app.route('/')  # create a decorator for testing the Flask framework
@@ -101,16 +126,14 @@ def client_report():
 
             for item in report_list:
                 if 'data-set-id' in item:
-                    data_set_id = item.replace('data-set-id=', '')
+                    report_id = item.replace('data-set-id=', '')
                 elif 'execution-id' in item:
                     execution_id = item.replace('execution-id=', '')
 
-            print(data_set_id, execution_id)
+            dnac_auth = get_dnac_jwt_token(DNAC_AUTH)
 
             # call the API to download the report file
-            # report_file_url = DNAC_URL + '/api/dnacaap/v1/daas/core/content/data-set/' + data_set_id + '/' + execution_id
-            # header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
-            # response = requests.get(report_file_url, headers=header, verify=False)
+            response = get_report_file(report_id, execution_id, dnac_auth)
 
             # save the report to a file
             #with open('client_report.json', 'wb') as file:
