@@ -92,7 +92,7 @@ def client_report():
         event_type = webhook_json['Event Type']
         event_status = webhook_json['Event Details']['status']
 
-        """
+
         if event_type == 'APP' and event_status == 'Success':
 
             # get the Cisco DNA Center Auth token
@@ -109,15 +109,17 @@ def client_report():
                 elif 'execution-id' in item:
                     execution_id = item.replace('execution-id=', '')
 
+            print(data_set_id, execution_id)
+
             # call the API to download the report file
-            report_file_url = DNAC_URL + '/api/dnacaap/v1/daas/core/content/data-set/' + data_set_id + '/' + execution_id
-            header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
-            response = requests.get(report_file_url, headers=header, verify=False)
+            # report_file_url = DNAC_URL + '/api/dnacaap/v1/daas/core/content/data-set/' + data_set_id + '/' + execution_id
+            # header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
+            # response = requests.get(report_file_url, headers=header, verify=False)
 
             # save the report to a file
-            with open('client_report.json', 'wb') as file:
-                file.write(response.content)
-                print('Client report file saved')
+            #with open('client_report.json', 'wb') as file:
+            #    file.write(response.content)
+            #    print('Client report file saved')
         """
 
         return 'Client Detail Report Data Received', 202
@@ -127,5 +129,3 @@ def client_report():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, ssl_context='adhoc')
-
-
