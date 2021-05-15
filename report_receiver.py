@@ -145,6 +145,7 @@ def client_report():
                 with open('report.json', 'w') as file:
                     file.write(report)
                     print('Client report file saved')
+                    file.close()
             except:
                 print('Client report not saved')
 
