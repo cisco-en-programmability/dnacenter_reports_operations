@@ -90,7 +90,7 @@ def get_report_file(report_id, execution_id, dnac_auth):
     :param dnac_auth:
     :return:
     """
-    url = DNAC_URL + '/data/reports/' + report_id + '/executions/' + execution_id
+    url = DNAC_URL + '/dna/intent/api/v1/data/reports' + report_id + '/executions/' + execution_id
     header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
     response = requests.get(url, headers=header, verify=False)
     report = response.json()
@@ -143,6 +143,12 @@ def client_report():
             report = json.dumps(report_content)
             with open('report.json', 'w') as file:
                 file.write(report)
+                print('Client report file saved')
+
+            # save the report to a file
+            report_json = json.dumps(report_content)
+            with open('report.json', 'w') as file:
+                file.write(report_json)
                 print('Client report file saved')
 
         return 'Client Detail Report Data Received', 202
