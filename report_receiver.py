@@ -84,11 +84,11 @@ def get_dnac_jwt_token(dnac_auth):
 
 def get_report_file(report_id, execution_id, dnac_auth):
     """
-
-    :param report_id:
-    :param execution_id:
-    :param dnac_auth:
-    :return:
+    This function will return the report content specified by the {report_id} and {execution_id}
+    :param report_id: report id
+    :param execution_id: execution id
+    :param dnac_auth: Cisco DNA Center Auth
+    :return: report data
     """
     url = DNAC_URL + '/dna/intent/api/v1/data/reports' + report_id + '/executions/' + execution_id
     header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
@@ -137,19 +137,16 @@ def client_report():
 
             # call the API to download the report file
             report_content = get_report_file(report_id, execution_id, dnac_auth)
-            print(report_content)
+            print('\nReport content:\n', report_content)
 
             # save the report to a file
-            report = json.dumps(report_content)
-            with open('report.json', 'w') as file:
-                file.write(report)
-                print('Client report file saved')
-
-            # save the report to a file
-            report_json = json.dumps(report_content)
-            with open('report.json', 'w') as file:
-                file.write(report_json)
-                print('Client report file saved')
+            try:
+                report = json.dumps(report_content)
+                with open('report.json', 'w') as file:
+                    file.write(report)
+                    print('Client report file saved')
+            except:
+                print('Client report not saved')
 
         return 'Client Detail Report Data Received', 202
     else:
