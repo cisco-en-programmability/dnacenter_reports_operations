@@ -141,14 +141,19 @@ def client_report():
             print('\nReport content:\n', report_content)
 
             # save the report to a file
-            try:
-                report = json.dumps(report_content)
+            report = json.dumps(report_content)
+
+            # verify if report file exists, if the "error" key exists
+
+            if 'error' not in report:
+                # no error found, save the report file
                 with open('report.json', 'w') as file:
                     file.write(report)
                     print('Client report file saved')
                     file.close()
-            except:
-                print('Client report not saved')
+            else:
+                report_error = report['error']
+                print('Client report not saved, error: ', report_error)
 
         return 'Client Detail Report Data Received', 202
     else:

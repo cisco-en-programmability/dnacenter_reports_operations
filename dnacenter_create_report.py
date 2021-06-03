@@ -175,7 +175,7 @@ def main():
     # create the report request payload
     
     report_request = {
-            "name": "Client Report Detail 24 hours test1",
+            "name": "Client Report Detail 24 hours",
             "description": "",
             "dataCategory": "Client",
             "viewGroupId": "d7afe5c9-4941-4251-8bf5-0fb643e90847",
