@@ -56,6 +56,7 @@ app.config['BASIC_AUTH_PASSWORD'] = WEBHOOK_PASSWORD
 # app.config['BASIC_AUTH_FORCE'] = True  # enable if all API endpoints support HTTP basic auth
 
 basic_auth = BasicAuth(app)
+
 DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
 
 

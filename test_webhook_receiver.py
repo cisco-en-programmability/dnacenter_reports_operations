@@ -47,7 +47,9 @@ report_notification = {
   "Event Details": {
     "name": "Report [Client Report - Client Detail - Mar 30 2021 at 03 08 pm]",
     "status": "Success",
-    "status update @": "Tue Mar 30 22:09:20 UTC 2021"
+    "status update @": "Tue Mar 30 22:09:20 UTC 2021",
+    "execution id": "fa9d9bc9-a99b-4d2c-b645-005fd3ec9d43",
+    "data set id": "e328ab57-0584-4ae6-9285-ce35c29ffd55"
   }
 }
 
