@@ -145,7 +145,8 @@ def client_report():
                 report = json.dumps(report_content)
 
                 # verify if report file exists, if the "error" key exists
-                
+                if 'error' in report_content:
+                    raise ValueError('Report error received')
                 with open('report.json', 'w') as file:
                     file.write(report)
                     print('Client report file saved')
