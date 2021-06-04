@@ -50,7 +50,7 @@ DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
 REPORT_CATEGORY = 'Client'
 VIEW_NAME = 'Client Detail'
 WEBHOOK_NAME = 'LinuxMint_Report'
-REPORT_NAME = 'Client Report Detail 24h'
+REPORT_NAME = 'Client Report Detail 24 hours'
 
 
 def pprint(json_data):
