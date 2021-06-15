@@ -22,7 +22,111 @@ Please follow these recommendations for production Flask deployments: https://fl
 
 **Usage**
 
-The script "dnacenter_create_report.py" will identify:
+The application "dnacenter_create_report_download.py" will identify:
+ - report group id for the report category "Client"
+ - report view id for the report "Client Detail"
+ - the configured webhook id where to send the report status notifications
+ - construct the payload required to create the new report
+ - create a new report
+ - identify when the report is starting execution
+ - check when the execution completed successfully
+ - download the report file and save to a file
+
+Sample Output:
+```
+/Users/gzapodea/PythonCode/dnacenter_reports_operations/venv/bin/python /Users/gzapodea/PythonCode/dnacenter_reports_operations/dnacenter_create_report_download.py
+
+Create Report App Run Start,  2021-06-14 19:54:50
+
+Report Category: Client
+Report View Group Id is: d7afe5c9-4941-4251-8bf5-0fb643e90847
+Report View Name: Client Detail
+Report View Id is: e8e66b17-4aeb-4857-af81-f472023bb05e
+
+Client Report Detail 
+
+{
+    "viewId": "e8e66b17-4aeb-4857-af81-f472023bb05e", 
+    "viewName": "Client Detail", 
+    "description": "This client report view provides detailed information about the list of clients that are seen in the network", 
+    "viewInfo": null, 
+    "schedules": [
+        {
+            "type": "SCHEDULE_NOW", 
+            "default": true
+        }, 
+        {
+            "type": "SCHEDULE_LATER", 
+            "default": false
+        }, 
+        {
+            "type": "SCHEDULE_RECURRENCE", 
+            "default": false
+        }
+    ], 
+    "deliveries": [
+        {
+            "type": "DOWNLOAD", 
+            "default": true
+        }, 
+        {
+            "type": "EMAIL", 
+            "default": false
+        }, 
+        {
+            "type": "WEBHOOK", 
+            "default": false
+        }
+    ], 
+    "formats": [
+        {
+            "name": "CSV", 
+            "format": "CSV", 
+            "template": {
+                "jsTemplateId": "BJYghfA3z"
+            }, 
+            "default": true
+        }, 
+        {
+            "name": "Tableau Data Extract", 
+            "format": "TDE", 
+            "template": null, 
+            "default": false
+        }, 
+        {
+            "name": "JSON", 
+            "format": "JSON", 
+            "template": null, 
+            "default": false
+        }
+    ], 
+    ...
+}
+
+Report submitted
+Report id:  8ba4c05e-3d07-47d6-8761-0761783b30f9
+
+Wait for report execution to start
+!!!!!!!!!!!!!!!
+
+Report execution started, wait for process to complete
+!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Report execution completed
+Report execution id:  a9a82752-8b0c-451c-a03d-aec7c757b25f
+
+Report content:
+ {'client_details': [], 'filters': [{'name': 'Location', 'displayName': 'Location', 'values': []}, {'name': 'DeviceType', 'displayName': 'Device Type', 'values': ['']}, {'name': 'SSID', 'displayName': 'SSID', 'values': []}, {'name': 'Band', 'displayName': 'Band', 'values': []}, {'name': 'startTime', 'displayName': 'Start Time', 'values': ['2021-06-14 02:55:17.581 AM UTC']}, {'name': 'endTime', 'displayName': 'End Time', 'values': ['2021-06-15 02:55:17.581 AM UTC']}]}
+Client report file saved
+
+Create Report App Run End,  2021-06-14 19:55:48
+
+Process finished with exit code 0
+
+```
+
+
+The application "dnacenter_create_report_webhook.py" will identify:
  - report group id for the report category "Client"
  - report view id for the report "Client Detail"
  - the configured webhook id where to send the report status notifications
@@ -112,7 +216,6 @@ Create Report App Run End,  2021-06-03 17:58:28
 The "report_receiver.py" will receive the Cisco DNA Center report notifications, download and save the report file when completed.
 
 Sample Output:
-
 ```
 
 Webhook Received
