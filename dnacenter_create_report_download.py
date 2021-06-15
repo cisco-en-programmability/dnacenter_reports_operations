@@ -50,7 +50,7 @@ DNAC_AUTH = HTTPBasicAuth(DNAC_USER, DNAC_PASS)
 REPORT_CATEGORY = 'Client'
 VIEW_NAME = 'Client Detail'
 WEBHOOK_NAME = 'LinuxMint_Report'
-REPORT_NAME = 'Client Report Detail 24 hours'
+REPORT_NAME = 'Client Report Detail 24 h'
 WEBHOOK_DELIVERY = True
 
 
@@ -131,19 +131,33 @@ def create_report(payload, dnac_auth):
     return response
 
 
-def get_destination_by_name(webhook_name, dnac_auth):
+def get_report_executions(report_id, dnac_auth):
     """
-    This function will return the REST (webhook) configuration for the {webhook_name}
-    :param webhook_name: webhook name for which we will get the configuration
+    This function will get the report executions info for the {report_id}
+    :param report_id: the report id
     :param dnac_auth: Cisco DNA Center Auth
-    :return: webhook details
+    :return: return the response payload
     """
-    url = DNAC_URL + '/dna/intent/api/v1/event/subscription-details/rest?connectorType=REST&name=' + webhook_name
+    url = DNAC_URL + '/dna/intent/api/v1/data/reports/' + report_id + '/executions'
     header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
     response = requests.get(url, headers=header, verify=False)
     response_json = response.json()
-    webhook_info = response_json[0]
-    return webhook_info
+    return response_json
+
+
+def get_report_file(report_id, execution_id, dnac_auth):
+    """
+    This function will return the report content specified by the {report_id} and {execution_id}
+    :param report_id: report id
+    :param execution_id: execution id
+    :param dnac_auth: Cisco DNA Center Auth
+    :return: report data
+    """
+    url = DNAC_URL + '/dna/intent/api/v1/data/reports' + report_id + '/executions/' + execution_id
+    header = {'Content-Type': 'application/json', 'X-Auth-Token': dnac_auth}
+    response = requests.get(url, headers=header, verify=False)
+    report = response.json()
+    return report
 
 
 def main():
@@ -154,7 +168,7 @@ def main():
      - run now schedule
      - all client details
      - wired and wireless clients
-     - report completion notification via Webhooks
+     - will check when report execution is completed and save the report to a file
     """
 
     # logging, debug level, to file {application_run.log}
@@ -187,12 +201,6 @@ def main():
     print('Report View Name:', VIEW_NAME)
     print('Report View Id is:', report_view_id)
 
-    # get the webhookId for the destination to send the report to
-    webhook_info = get_destination_by_name(WEBHOOK_NAME, dnac_auth)
-    webhook_id = webhook_info['instanceId']
-    print('Webhook Name:', WEBHOOK_NAME)
-    print('Webhook Id:', webhook_id, '\n')
-
     # get the detailed report views
     report_detail_view = get_detailed_report_views(report_view_id, view_group_id, dnac_auth)
     print('\nClient Report Detail \n')
@@ -213,11 +221,6 @@ def main():
             {
                 'type': 'DOWNLOAD',
                 "default": True
-            },
-            {
-                'type': 'WEBHOOK',
-                'webhookId': webhook_id,
-                'default': False
             }
         ],
         'view': {
@@ -432,9 +435,67 @@ def main():
         }
     }
 
-    report_status = create_report(report_request, dnac_auth)
-    if report_status.status_code == 200:
+    create_report_status = create_report(report_request, dnac_auth)
+
+    if create_report_status.status_code == 200:
         print('\nReport submitted')
+
+        # parsing the response from create new report API
+        create_report_json = create_report_status.json()
+        report_id = create_report_json['reportId']
+        print('Report id: ', report_id)
+
+        # verify when the report execution starts
+        # this app will create a new report, not execute an existing report again
+        # due to this there will be always execution count "0" when the report is triggered
+        # for a new report, not executed yet
+
+        print('\nWait for report execution to start')
+        execution_count = 0
+        while execution_count == 0:
+            time.sleep(1)
+            print('!', end="")
+            report_details = get_report_executions(report_id, dnac_auth)
+            execution_count = report_details['executionCount']
+
+        # report execution started
+        print('\n\nReport execution started, wait for process to complete')
+
+        # check when the report is completed
+        process_status = None
+        while process_status != 'SUCCESS':
+            time.sleep(1)
+            print('!', end="")
+            report_details = get_report_executions(report_id, dnac_auth)
+            execution_info = report_details['executions'][0]
+            process_status = execution_info['processStatus']
+
+        # execution completed successfully
+
+        print('\n\nReport execution completed')
+        execution_id = report_details['executions'][0]['executionId']
+        print('Report execution id: ', execution_id)
+
+        # download the report
+        # call the API to download the report file
+        report_content = get_report_file(report_id, execution_id, dnac_auth)
+        print('\nReport content:\n', report_content)
+
+        # save the report to a file
+        try:
+            report = json.dumps(report_content)
+
+            # verify if report file exists, if the "error" key exists
+            if 'error' in report_content:
+                raise ValueError('Report error received')
+            with open('report.json', 'w') as file:
+                file.write(report)
+                print('Client report file saved')
+                file.close()
+        except:
+            report_error = report_content['error']
+            print('Client report not saved, error received: ', report_error)
+
     else:
         print('\nReport not submitted, ', report_status.text)
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
