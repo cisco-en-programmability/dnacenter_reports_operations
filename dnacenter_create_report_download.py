@@ -51,6 +51,7 @@ REPORT_CATEGORY = 'Client'
 VIEW_NAME = 'Client Detail'
 WEBHOOK_NAME = 'LinuxMint_Report'
 REPORT_NAME = 'Client Report Detail 24 hours'
+WEBHOOK_DELIVERY = True
 
 
 def pprint(json_data):
@@ -147,8 +148,13 @@ def get_destination_by_name(webhook_name, dnac_auth):
 
 def main():
     """
-    This application will create a new Client Detail Report, for the Global site, all client details, run now schedule,
-    all client details, wired and wireless clients, and report completion notification via Webhook notification
+    This application will create a new Client Detail Report:
+     - for the Global site
+     - all client details
+     - run now schedule
+     - all client details
+     - wired and wireless clients
+     - report completion notification via Webhooks
     """
 
     # logging, debug level, to file {application_run.log}
@@ -204,6 +210,10 @@ def main():
             'type': 'SCHEDULE_NOW'
         },
         'deliveries': [
+            {
+                'type': 'DOWNLOAD',
+                "default": True
+            },
             {
                 'type': 'WEBHOOK',
                 'webhookId': webhook_id,
